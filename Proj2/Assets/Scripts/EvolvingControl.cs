@@ -4,6 +4,15 @@ using UnityEngine.UI;
 using System.Linq;
 using Random = UnityEngine.Random;
 
+public enum Type
+{
+    ControloBola,
+    Defesa,
+    OnevOne
+};
+
+
+
 
 public class SimulationInfo
 {
@@ -12,7 +21,7 @@ public class SimulationInfo
     public D31NeuralControler playerBlue;
     public int individualIndexRed;
     public int individualIndexBlue;
-
+    
 
     public SimulationInfo(GameObject sim, D31NeuralControler playerRed, D31NeuralControler playerBlue, int individualIndexRed, int individualIndexBlue)
     {
@@ -79,6 +88,7 @@ public class EvolvingControl : MonoBehaviour {
     protected bool singlePlayer;
     protected string textoUpdate;
     protected List<MatchPair> pairings;
+    public Type type;
 
     public void Shuffle(List<int> ts)
     {
@@ -215,6 +225,7 @@ public class EvolvingControl : MonoBehaviour {
         {
 
             redPlayerScript = sim.transform.Find("D31-red").gameObject.transform.Find("Body").gameObject.GetComponent<D31NeuralControler>();
+            redPlayerScript.Type = type;
 
         }
 
@@ -232,6 +243,7 @@ public class EvolvingControl : MonoBehaviour {
         if (bluePlayerScript != null && bluePlayerScript.enabled)
         {
             bluePlayerScript.neuralController = metaengine.PopulationBlue[indexIndBlue].getIndividualController();
+            bluePlayerScript.Type = type;
         }
 
         return new SimulationInfo (sim, redPlayerScript, bluePlayerScript , indexIndRed, indexIndBlue);

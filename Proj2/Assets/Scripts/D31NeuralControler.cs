@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+
+
 public class D31NeuralControler : MonoBehaviour
 {
     public RobotUnit agent; // the agent controller we want to use
@@ -13,6 +15,13 @@ public class D31NeuralControler : MonoBehaviour
     public GameObject AdversaryGoal;
     public GameObject Adversary;
     public GameObject ScoreSystem;
+
+    public Type type;
+
+    public Type Type{
+        get { return type; }
+        set { type = value; }
+    }
 
     
     public int numberOfInputSensores { get; private set; }
@@ -295,31 +304,85 @@ public class D31NeuralControler : MonoBehaviour
     {
         // Fitness function for the Blue player. The code to attribute fitness to individuals should be written here.  
         //* YOUR CODE HERE*//
-        if (hitTheBall > 10 && GoalsOnAdversaryGoal != 0)
+        switch (type)
         {
-            hitTheBall = -hitTheBall;
+            case Type.ControloBola:
+                {
+                    if (hitTheBall > 10 && GoalsOnAdversaryGoal != 0)
+                    {
+                        hitTheBall = -hitTheBall;
+                    }
+
+                    float aux = 2 / (Mathf.Exp(distancefromBallToAdversaryGoal.Average()) + Mathf.Exp(-distancefromBallToAdversaryGoal.Average()));
+                    float aux2 = 2 / (Mathf.Exp(distanceToBall.Average()) + Mathf.Exp(-distanceToBall.Average()));
+                    float fitness = hitTheBall * 15 - hitTheWall - 10 * GoalsOnMyGoal + 15 * GoalsOnAdversaryGoal + aux + aux2 * (1 / 3);
+                    return fitness;
+
+                }
+
+            case Type.OnevOne:
+                {
+                    if (hitTheBall > 20 && GoalsOnAdversaryGoal != 0)
+                    {
+                        hitTheBall = -hitTheBall;
+                    }
+
+                    float aux = 2 / (Mathf.Exp(distancefromBallToAdversaryGoal.Average()) + Mathf.Exp(-distancefromBallToAdversaryGoal.Average()));
+                    float aux2 = 2 / (Mathf.Exp(distanceToBall.Average()) + Mathf.Exp(-distanceToBall.Average()));
+                    float fitness = hitTheBall * 20 - hitTheWall - 20 * GoalsOnMyGoal + 20 * GoalsOnAdversaryGoal + aux + aux2 * (1 / 3);
+                    return fitness;
+                }
+
+            default:
+            case Type.Defesa:
+                {
+                    float aux = 2 / (Mathf.Exp(distancefromBallToAdversaryGoal.Average()) + Mathf.Exp(-distancefromBallToAdversaryGoal.Average()));
+                    float fitness = hitTheBall * 15 - GoalsOnMyGoal + aux * (1 / 3);
+                    return fitness;
+                }
+
         }
-
-
-        float aux = 2 / (Mathf.Exp(distancefromBallToAdversaryGoal.Average()) + Mathf.Exp(-distancefromBallToAdversaryGoal.Average()));
-        float aux2 = 2 / (Mathf.Exp(distanceToBall.Average()) + Mathf.Exp(-distanceToBall.Average()));
-        float fitness = hitTheBall - hitTheWall - 10 * GoalsOnMyGoal + 10 * GoalsOnAdversaryGoal + aux + aux2;
-        return fitness;
     }
 
     public float GetScoreRed()
     {
         // Fitness function for the Red player. The code to attribute fitness to individuals should be written here. 
-        if (hitTheBall > 10 && GoalsOnAdversaryGoal != 0)
-        {
-            hitTheBall = -hitTheBall;
+        switch (type) {
+            case Type.ControloBola: {
+                if (hitTheBall > 10 && GoalsOnAdversaryGoal != 0)
+                {
+                    hitTheBall = -hitTheBall;
+                }
+
+                float aux = 2 / (Mathf.Exp(distancefromBallToAdversaryGoal.Average()) + Mathf.Exp(-distancefromBallToAdversaryGoal.Average()));
+                float aux2 = 2 / (Mathf.Exp(distanceToBall.Average()) + Mathf.Exp(-distanceToBall.Average()));
+                float fitness = hitTheBall * 15 - hitTheWall - 10 * GoalsOnMyGoal + 15 * GoalsOnAdversaryGoal + aux + aux2 * (1 / 3) + agentSpeed.Average();
+                return fitness;
+
+            }
+
+            case Type.OnevOne:
+                {
+                    if (hitTheBall > 20 && GoalsOnAdversaryGoal != 0)
+                    {
+                        hitTheBall = -hitTheBall;
+                    }
+
+                    float aux = 2 / (Mathf.Exp(distancefromBallToAdversaryGoal.Average()) + Mathf.Exp(-distancefromBallToAdversaryGoal.Average()));
+                    float aux2 = 2 / (Mathf.Exp(distanceToBall.Average()) + Mathf.Exp(-distanceToBall.Average()));
+                    float fitness = hitTheBall * 20 - hitTheWall - 20 * GoalsOnMyGoal + 20 * GoalsOnAdversaryGoal + aux + aux2 * (1 / 3) + agentSpeed.Average();
+                    return fitness;
+                }
+
+            default:
+            case Type.Defesa:
+                {
+                    float aux = 2 / (Mathf.Exp(distancefromBallToAdversaryGoal.Average()) + Mathf.Exp(-distancefromBallToAdversaryGoal.Average()));
+                    float fitness = hitTheBall * 15 - GoalsOnMyGoal + aux * (1 / 3) + agentSpeed.Average()*4;
+                    return fitness;
+                }
+
         }
-
-
-        float aux = 2 / (Mathf.Exp(distancefromBallToAdversaryGoal.Average()) + Mathf.Exp(-distancefromBallToAdversaryGoal.Average()));
-        float aux2 = 2 / (Mathf.Exp(distanceToBall.Average()) + Mathf.Exp(-distanceToBall.Average()));
-        float fitness = hitTheBall * 15 - hitTheWall - 10 * GoalsOnMyGoal + 15 * GoalsOnAdversaryGoal + aux + aux2 * (1 / 3);
-        return fitness;
     }
-
+                
 }
